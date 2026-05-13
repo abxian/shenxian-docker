@@ -27,6 +27,39 @@ jobs:
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: src
 
+      - name: Checkout private admin frontend source
+        uses: actions/checkout@v4
+        with:
+          repository: abxian/admin-frontend
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: admin-frontend
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: admin-frontend/package-lock.json
+
+      - name: Build admin frontend
+        working-directory: admin-frontend
+        run: |
+          npm ci
+          npm run build
+          rm -rf ../src/cmd/dashboard/admin-dist
+          mkdir -p ../src/cmd/dashboard/admin-dist
+          cp -R dist/* ../src/cmd/dashboard/admin-dist/
+          mkdir -p ../src/cmd/dashboard/user-dist
+          if [ ! -f ../src/cmd/dashboard/user-dist/index.html ]; then
+            printf '<!doctype html><html><head><meta charset="utf-8"><title>Shenxian Monitoring</title></head><body>Shenxian Monitoring</body></html>\n' > ../src/cmd/dashboard/user-dist/index.html
+          fi
+
+      - name: Generate dashboard swagger docs
+        working-directory: src
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init --pd -d cmd/dashboard -g main.go -o cmd/dashboard/docs
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
