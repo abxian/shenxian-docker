@@ -8,10 +8,7 @@
 ghcr.io/abxian/shenxian:latest
 ```
 
-支持架构：
-
-- `linux/amd64`
-- `linux/arm64`
+当前公开 `latest` 镜像先发布 `linux/amd64`，用于常见 x86_64 服务器。`linux/arm64` 会在单独构建验证后再补。
 
 ## 安装
 
