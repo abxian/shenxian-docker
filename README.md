@@ -1,6 +1,6 @@
 # 神仙监控 Docker 镜像
 
-这是神仙监控 Dashboard 的公开 Docker 镜像发布仓库。主项目源码仍保存在私有仓库；本仓库只负责从公开 dufs 下载已编译 Dashboard 二进制并构建公开镜像。
+这是神仙监控 Dashboard 的公开 Docker 镜像发布仓库。主项目源码仍保存在私有仓库；本仓库只保存 Docker 发布文件，GitHub Actions 通过仓库密钥读取私有源码并在构建容器内编译 CGO 可用的 Dashboard 二进制。
 
 ## 镜像
 

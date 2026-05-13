@@ -1,21 +1,21 @@
-FROM alpine AS download
+FROM --platform=$TARGETPLATFORM golang:1.25-alpine AS build
 
-ARG TARGETOS
-ARG TARGETARCH
-ARG DUFS_BASE=http://114.80.36.225:15667/sxjc
+WORKDIR /src
 
-RUN apk add --no-cache ca-certificates curl
-RUN test "$TARGETOS" = "linux"
-RUN curl -fsSL "$DUFS_BASE/releases/dashboard/dashboard-${TARGETOS}-${TARGETARCH}" -o /dashboard
-RUN chmod +x /dashboard
+RUN apk add --no-cache gcc musl-dev ca-certificates tzdata
 
-FROM busybox:stable-musl
+COPY src/ ./
 
-COPY --from=download /etc/ssl/certs /etc/ssl/certs
-COPY --from=download /dashboard /dashboard/app
+RUN CGO_ENABLED=1 go build -trimpath -buildvcs=false -ldflags="-s -w" -o /dashboard/app ./cmd/dashboard
+
+FROM alpine:3.22
+
+RUN apk add --no-cache ca-certificates tzdata
+
+COPY --from=build /dashboard/app /dashboard/app
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh /dashboard/app
 
 WORKDIR /dashboard
 VOLUME ["/dashboard/data"]
