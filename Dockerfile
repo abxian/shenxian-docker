@@ -1,16 +1,20 @@
-FROM --platform=$TARGETPLATFORM golang:1.25-alpine AS build
+FROM --platform=$TARGETPLATFORM golang:1.25-bookworm AS build
 
 WORKDIR /src
 
-RUN apk add --no-cache gcc musl-dev ca-certificates tzdata
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc ca-certificates tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY src/ ./
 
 RUN CGO_ENABLED=1 go build -trimpath -buildvcs=false -ldflags="-s -w" -o /dashboard/app ./cmd/dashboard
 
-FROM alpine:3.22
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache ca-certificates tzdata
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /dashboard/app /dashboard/app
 COPY entrypoint.sh /entrypoint.sh
