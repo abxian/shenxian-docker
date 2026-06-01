@@ -2,9 +2,10 @@ FROM --platform=$TARGETPLATFORM golang:1.26-bookworm AS build
 
 WORKDIR /src
 
-# DASHBOARD_VERSION 注入 singleton.Version（MCP serverInfo / 启动日志显示）。
-# 与 abxian/nz 同步到的上游版本保持一致；每次 upstream sync 后在这里 bump。
-ARG DASHBOARD_VERSION=v2.1.4
+# DASHBOARD_VERSION 注入 singleton.Version（页脚 / MCP serverInfo / 启动日志显示）。
+# 神仙监控自有版本号，与官方 nezha 版本完全无关——upstream sync 只合代码，不动这里。
+# 想发新版时手动 bump 这个号即可。
+ARG DASHBOARD_VERSION=v1.0.0
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc ca-certificates tzdata \
