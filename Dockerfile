@@ -5,7 +5,7 @@ WORKDIR /src
 # DASHBOARD_VERSION 注入 singleton.Version（页脚 / MCP serverInfo / 启动日志显示）。
 # 神仙监控自有版本号，与官方 nezha 版本完全无关——upstream sync 只合代码，不动这里。
 # 想发新版时手动 bump 这个号即可。
-ARG DASHBOARD_VERSION=v1.0.0
+ARG DASHBOARD_VERSION=v1.0.1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc ca-certificates tzdata \
