@@ -27,6 +27,17 @@ jobs:
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: src
 
+      - name: Fetch IPInfo GeoIP database (best-effort)
+        env:
+          IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+        run: |
+          if [ -n "$IPINFO_TOKEN" ]; then
+            wget -qO src/pkg/geoip/geoip.db "https://ipinfo.io/data/free/country.mmdb?token=${IPINFO_TOKEN}"
+            echo "GeoIP DB fetched: $(ls -l src/pkg/geoip/geoip.db)"
+          else
+            echo "IPINFO_TOKEN not set; keeping stub geoip.db (GeoIP country lookup disabled)"
+          fi
+
       - name: Checkout private admin frontend source
         uses: actions/checkout@v4
         with:
