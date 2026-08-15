@@ -1,4 +1,7 @@
-FROM --platform=$TARGETPLATFORM golang:1.26-bookworm AS build
+# Go 1.26.6 caused high-frequency gRPC RequestTask/ReportSystemState stream
+# cancellations under the production Agent load. Keep the verified toolchain
+# pinned so rebuilding the same source cannot silently change runtime behavior.
+FROM --platform=$TARGETPLATFORM golang:1.26.5-bookworm AS build
 
 WORKDIR /src
 
